@@ -1,0 +1,158 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> npc
+Rule 1     npc -> IDENT IDENT LBRACE atributos RBRACE
+Rule 2     atributos -> atributo
+Rule 3     atributos -> atributos atributo
+Rule 4     atributo -> IDENT EQUALS valor
+Rule 5     valor -> NUMBER
+Rule 6     valor -> STRING
+Rule 7     valor -> IDENT
+
+Terminals, with rules where they appear
+
+EQUALS               : 4
+IDENT                : 1 1 4 7
+LBRACE               : 1
+NUMBER               : 5
+RBRACE               : 1
+STRING               : 6
+error                : 
+
+Nonterminals, with rules where they appear
+
+atributo             : 2 3
+atributos            : 1 3
+npc                  : 0
+valor                : 4
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . npc
+    (1) npc -> . IDENT IDENT LBRACE atributos RBRACE
+
+    IDENT           shift and go to state 2
+
+    npc                            shift and go to state 1
+
+state 1
+
+    (0) S' -> npc .
+
+
+
+state 2
+
+    (1) npc -> IDENT . IDENT LBRACE atributos RBRACE
+
+    IDENT           shift and go to state 3
+
+
+state 3
+
+    (1) npc -> IDENT IDENT . LBRACE atributos RBRACE
+
+    LBRACE          shift and go to state 4
+
+
+state 4
+
+    (1) npc -> IDENT IDENT LBRACE . atributos RBRACE
+    (2) atributos -> . atributo
+    (3) atributos -> . atributos atributo
+    (4) atributo -> . IDENT EQUALS valor
+
+    IDENT           shift and go to state 5
+
+    atributos                      shift and go to state 6
+    atributo                       shift and go to state 7
+
+state 5
+
+    (4) atributo -> IDENT . EQUALS valor
+
+    EQUALS          shift and go to state 8
+
+
+state 6
+
+    (1) npc -> IDENT IDENT LBRACE atributos . RBRACE
+    (3) atributos -> atributos . atributo
+    (4) atributo -> . IDENT EQUALS valor
+
+    RBRACE          shift and go to state 9
+    IDENT           shift and go to state 5
+
+    atributo                       shift and go to state 10
+
+state 7
+
+    (2) atributos -> atributo .
+
+    RBRACE          reduce using rule 2 (atributos -> atributo .)
+    IDENT           reduce using rule 2 (atributos -> atributo .)
+
+
+state 8
+
+    (4) atributo -> IDENT EQUALS . valor
+    (5) valor -> . NUMBER
+    (6) valor -> . STRING
+    (7) valor -> . IDENT
+
+    NUMBER          shift and go to state 13
+    STRING          shift and go to state 14
+    IDENT           shift and go to state 11
+
+    valor                          shift and go to state 12
+
+state 9
+
+    (1) npc -> IDENT IDENT LBRACE atributos RBRACE .
+
+    $end            reduce using rule 1 (npc -> IDENT IDENT LBRACE atributos RBRACE .)
+
+
+state 10
+
+    (3) atributos -> atributos atributo .
+
+    RBRACE          reduce using rule 3 (atributos -> atributos atributo .)
+    IDENT           reduce using rule 3 (atributos -> atributos atributo .)
+
+
+state 11
+
+    (7) valor -> IDENT .
+
+    RBRACE          reduce using rule 7 (valor -> IDENT .)
+    IDENT           reduce using rule 7 (valor -> IDENT .)
+
+
+state 12
+
+    (4) atributo -> IDENT EQUALS valor .
+
+    RBRACE          reduce using rule 4 (atributo -> IDENT EQUALS valor .)
+    IDENT           reduce using rule 4 (atributo -> IDENT EQUALS valor .)
+
+
+state 13
+
+    (5) valor -> NUMBER .
+
+    RBRACE          reduce using rule 5 (valor -> NUMBER .)
+    IDENT           reduce using rule 5 (valor -> NUMBER .)
+
+
+state 14
+
+    (6) valor -> STRING .
+
+    RBRACE          reduce using rule 6 (valor -> STRING .)
+    IDENT           reduce using rule 6 (valor -> STRING .)
+
