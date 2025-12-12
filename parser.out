@@ -1,0 +1,329 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> programa
+Rule 1     programa -> instrucoes
+Rule 2     instrucoes -> instrucao instrucoes
+Rule 3     instrucoes -> instrucao
+Rule 4     instrucao -> definicao_npc
+Rule 5     instrucao -> acao_atacar
+Rule 6     instrucao -> acao_imprimir
+Rule 7     definicao_npc -> NPC IDENT LBRACE lista_atributos RBRACE
+Rule 8     lista_atributos -> atributo lista_atributos
+Rule 9     lista_atributos -> atributo
+Rule 10    atributo -> IDENT EQUALS valor
+Rule 11    valor -> NUMBER
+Rule 12    valor -> STRING
+Rule 13    acao_atacar -> ATACAR LPAREN IDENT COMMA IDENT RPAREN
+Rule 14    acao_imprimir -> IMPRIMIR LPAREN IDENT RPAREN
+
+Terminals, with rules where they appear
+
+ATACAR               : 13
+COMMA                : 13
+EQUALS               : 10
+IDENT                : 7 10 13 13 14
+IMPRIMIR             : 14
+LBRACE               : 7
+LPAREN               : 13 14
+NPC                  : 7
+NUMBER               : 11
+RBRACE               : 7
+RPAREN               : 13 14
+STRING               : 12
+error                : 
+
+Nonterminals, with rules where they appear
+
+acao_atacar          : 5
+acao_imprimir        : 6
+atributo             : 8 9
+definicao_npc        : 4
+instrucao            : 2 3
+instrucoes           : 1 2
+lista_atributos      : 7 8
+programa             : 0
+valor                : 10
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . programa
+    (1) programa -> . instrucoes
+    (2) instrucoes -> . instrucao instrucoes
+    (3) instrucoes -> . instrucao
+    (4) instrucao -> . definicao_npc
+    (5) instrucao -> . acao_atacar
+    (6) instrucao -> . acao_imprimir
+    (7) definicao_npc -> . NPC IDENT LBRACE lista_atributos RBRACE
+    (13) acao_atacar -> . ATACAR LPAREN IDENT COMMA IDENT RPAREN
+    (14) acao_imprimir -> . IMPRIMIR LPAREN IDENT RPAREN
+
+    NPC             shift and go to state 7
+    ATACAR          shift and go to state 8
+    IMPRIMIR        shift and go to state 9
+
+    programa                       shift and go to state 1
+    instrucoes                     shift and go to state 2
+    instrucao                      shift and go to state 3
+    definicao_npc                  shift and go to state 4
+    acao_atacar                    shift and go to state 5
+    acao_imprimir                  shift and go to state 6
+
+state 1
+
+    (0) S' -> programa .
+
+
+
+state 2
+
+    (1) programa -> instrucoes .
+
+    $end            reduce using rule 1 (programa -> instrucoes .)
+
+
+state 3
+
+    (2) instrucoes -> instrucao . instrucoes
+    (3) instrucoes -> instrucao .
+    (2) instrucoes -> . instrucao instrucoes
+    (3) instrucoes -> . instrucao
+    (4) instrucao -> . definicao_npc
+    (5) instrucao -> . acao_atacar
+    (6) instrucao -> . acao_imprimir
+    (7) definicao_npc -> . NPC IDENT LBRACE lista_atributos RBRACE
+    (13) acao_atacar -> . ATACAR LPAREN IDENT COMMA IDENT RPAREN
+    (14) acao_imprimir -> . IMPRIMIR LPAREN IDENT RPAREN
+
+    $end            reduce using rule 3 (instrucoes -> instrucao .)
+    NPC             shift and go to state 7
+    ATACAR          shift and go to state 8
+    IMPRIMIR        shift and go to state 9
+
+    instrucao                      shift and go to state 3
+    instrucoes                     shift and go to state 10
+    definicao_npc                  shift and go to state 4
+    acao_atacar                    shift and go to state 5
+    acao_imprimir                  shift and go to state 6
+
+state 4
+
+    (4) instrucao -> definicao_npc .
+
+    NPC             reduce using rule 4 (instrucao -> definicao_npc .)
+    ATACAR          reduce using rule 4 (instrucao -> definicao_npc .)
+    IMPRIMIR        reduce using rule 4 (instrucao -> definicao_npc .)
+    $end            reduce using rule 4 (instrucao -> definicao_npc .)
+
+
+state 5
+
+    (5) instrucao -> acao_atacar .
+
+    NPC             reduce using rule 5 (instrucao -> acao_atacar .)
+    ATACAR          reduce using rule 5 (instrucao -> acao_atacar .)
+    IMPRIMIR        reduce using rule 5 (instrucao -> acao_atacar .)
+    $end            reduce using rule 5 (instrucao -> acao_atacar .)
+
+
+state 6
+
+    (6) instrucao -> acao_imprimir .
+
+    NPC             reduce using rule 6 (instrucao -> acao_imprimir .)
+    ATACAR          reduce using rule 6 (instrucao -> acao_imprimir .)
+    IMPRIMIR        reduce using rule 6 (instrucao -> acao_imprimir .)
+    $end            reduce using rule 6 (instrucao -> acao_imprimir .)
+
+
+state 7
+
+    (7) definicao_npc -> NPC . IDENT LBRACE lista_atributos RBRACE
+
+    IDENT           shift and go to state 11
+
+
+state 8
+
+    (13) acao_atacar -> ATACAR . LPAREN IDENT COMMA IDENT RPAREN
+
+    LPAREN          shift and go to state 12
+
+
+state 9
+
+    (14) acao_imprimir -> IMPRIMIR . LPAREN IDENT RPAREN
+
+    LPAREN          shift and go to state 13
+
+
+state 10
+
+    (2) instrucoes -> instrucao instrucoes .
+
+    $end            reduce using rule 2 (instrucoes -> instrucao instrucoes .)
+
+
+state 11
+
+    (7) definicao_npc -> NPC IDENT . LBRACE lista_atributos RBRACE
+
+    LBRACE          shift and go to state 14
+
+
+state 12
+
+    (13) acao_atacar -> ATACAR LPAREN . IDENT COMMA IDENT RPAREN
+
+    IDENT           shift and go to state 15
+
+
+state 13
+
+    (14) acao_imprimir -> IMPRIMIR LPAREN . IDENT RPAREN
+
+    IDENT           shift and go to state 16
+
+
+state 14
+
+    (7) definicao_npc -> NPC IDENT LBRACE . lista_atributos RBRACE
+    (8) lista_atributos -> . atributo lista_atributos
+    (9) lista_atributos -> . atributo
+    (10) atributo -> . IDENT EQUALS valor
+
+    IDENT           shift and go to state 17
+
+    lista_atributos                shift and go to state 18
+    atributo                       shift and go to state 19
+
+state 15
+
+    (13) acao_atacar -> ATACAR LPAREN IDENT . COMMA IDENT RPAREN
+
+    COMMA           shift and go to state 20
+
+
+state 16
+
+    (14) acao_imprimir -> IMPRIMIR LPAREN IDENT . RPAREN
+
+    RPAREN          shift and go to state 21
+
+
+state 17
+
+    (10) atributo -> IDENT . EQUALS valor
+
+    EQUALS          shift and go to state 22
+
+
+state 18
+
+    (7) definicao_npc -> NPC IDENT LBRACE lista_atributos . RBRACE
+
+    RBRACE          shift and go to state 23
+
+
+state 19
+
+    (8) lista_atributos -> atributo . lista_atributos
+    (9) lista_atributos -> atributo .
+    (8) lista_atributos -> . atributo lista_atributos
+    (9) lista_atributos -> . atributo
+    (10) atributo -> . IDENT EQUALS valor
+
+    RBRACE          reduce using rule 9 (lista_atributos -> atributo .)
+    IDENT           shift and go to state 17
+
+    atributo                       shift and go to state 19
+    lista_atributos                shift and go to state 24
+
+state 20
+
+    (13) acao_atacar -> ATACAR LPAREN IDENT COMMA . IDENT RPAREN
+
+    IDENT           shift and go to state 25
+
+
+state 21
+
+    (14) acao_imprimir -> IMPRIMIR LPAREN IDENT RPAREN .
+
+    NPC             reduce using rule 14 (acao_imprimir -> IMPRIMIR LPAREN IDENT RPAREN .)
+    ATACAR          reduce using rule 14 (acao_imprimir -> IMPRIMIR LPAREN IDENT RPAREN .)
+    IMPRIMIR        reduce using rule 14 (acao_imprimir -> IMPRIMIR LPAREN IDENT RPAREN .)
+    $end            reduce using rule 14 (acao_imprimir -> IMPRIMIR LPAREN IDENT RPAREN .)
+
+
+state 22
+
+    (10) atributo -> IDENT EQUALS . valor
+    (11) valor -> . NUMBER
+    (12) valor -> . STRING
+
+    NUMBER          shift and go to state 27
+    STRING          shift and go to state 28
+
+    valor                          shift and go to state 26
+
+state 23
+
+    (7) definicao_npc -> NPC IDENT LBRACE lista_atributos RBRACE .
+
+    NPC             reduce using rule 7 (definicao_npc -> NPC IDENT LBRACE lista_atributos RBRACE .)
+    ATACAR          reduce using rule 7 (definicao_npc -> NPC IDENT LBRACE lista_atributos RBRACE .)
+    IMPRIMIR        reduce using rule 7 (definicao_npc -> NPC IDENT LBRACE lista_atributos RBRACE .)
+    $end            reduce using rule 7 (definicao_npc -> NPC IDENT LBRACE lista_atributos RBRACE .)
+
+
+state 24
+
+    (8) lista_atributos -> atributo lista_atributos .
+
+    RBRACE          reduce using rule 8 (lista_atributos -> atributo lista_atributos .)
+
+
+state 25
+
+    (13) acao_atacar -> ATACAR LPAREN IDENT COMMA IDENT . RPAREN
+
+    RPAREN          shift and go to state 29
+
+
+state 26
+
+    (10) atributo -> IDENT EQUALS valor .
+
+    IDENT           reduce using rule 10 (atributo -> IDENT EQUALS valor .)
+    RBRACE          reduce using rule 10 (atributo -> IDENT EQUALS valor .)
+
+
+state 27
+
+    (11) valor -> NUMBER .
+
+    IDENT           reduce using rule 11 (valor -> NUMBER .)
+    RBRACE          reduce using rule 11 (valor -> NUMBER .)
+
+
+state 28
+
+    (12) valor -> STRING .
+
+    IDENT           reduce using rule 12 (valor -> STRING .)
+    RBRACE          reduce using rule 12 (valor -> STRING .)
+
+
+state 29
+
+    (13) acao_atacar -> ATACAR LPAREN IDENT COMMA IDENT RPAREN .
+
+    NPC             reduce using rule 13 (acao_atacar -> ATACAR LPAREN IDENT COMMA IDENT RPAREN .)
+    ATACAR          reduce using rule 13 (acao_atacar -> ATACAR LPAREN IDENT COMMA IDENT RPAREN .)
+    IMPRIMIR        reduce using rule 13 (acao_atacar -> ATACAR LPAREN IDENT COMMA IDENT RPAREN .)
+    $end            reduce using rule 13 (acao_atacar -> ATACAR LPAREN IDENT COMMA IDENT RPAREN .)
+

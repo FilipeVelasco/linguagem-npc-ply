@@ -112,17 +112,186 @@ acao_atacar   → atacar(IDENT, IDENT)
 
 ---
 
-## 📌 SLIDE 4: Ações Semânticas (1.5 min)
+## 📌 SLIDE 3b: Simulação de Derivação Complexa (1 min)
 
-### Tabela de Produções e Ações
+### Código de Entrada:
+```
+npc Heroi { vida=100 ataque=20 defesa=5 }
+npc Goblin { vida=50 ataque=15 defesa=2 }
+atacar(Heroi, Goblin)
+imprimir(Goblin)
+```
 
-| Produção | Ação Semântica | O que faz |
-|----------|----------------|-----------|
-| `definicao_npc` | `tabela_simbolos[nome] = atributos` | Armazena NPC na memória |
-| `acao_atacar` | `alvo['vida'] -= (ataque - defesa)` | Calcula e aplica dano |
-| `acao_imprimir` | `print(tabela_simbolos[nome])` | Mostra status |
+### Derivação Passo a Passo:
 
-### Código da Ação Semântica mais complexa:
+**Passo 1: Derivação da primeira instrução (Criar Herói)**
+
+```
+programa
+  ⇒ instrucoes
+  ⇒ instrucao instrucoes
+  ⇒ definicao_npc instrucoes
+  ⇒ NPC IDENT LBRACE lista_atributos RBRACE instrucoes
+  ⇒ npc Heroi { lista_atributos } instrucoes
+  ⇒ npc Heroi { atributo lista_atributos } instrucoes
+  ⇒ npc Heroi { IDENT EQUALS valor lista_atributos } instrucoes
+  ⇒ npc Heroi { vida = 100 lista_atributos } instrucoes
+  ...
+  [AÇÃO SEMÂNTICA: tabela_simbolos["Heroi"] = {"vida": 100, "ataque": 20, "defesa": 5}]
+```
+
+**Passo 2: Derivação da segunda instrução (Criar Goblin)**
+
+```
+instrucoes
+  ⇒ instrucao instrucoes
+  ⇒ definicao_npc instrucoes
+  ⇒ npc Goblin { vida=50 ataque=15 defesa=2 } instrucoes
+  [AÇÃO SEMÂNTICA: tabela_simbolos["Goblin"] = {"vida": 50, "ataque": 15, "defesa": 2}]
+```
+
+**Passo 3: Derivação da ação de ataque**
+
+```
+instrucoes
+  ⇒ instrucao instrucoes
+  ⇒ acao_atacar instrucoes
+  ⇒ ATACAR LPAREN IDENT COMMA IDENT RPAREN instrucoes
+  ⇒ atacar ( Heroi , Goblin ) instrucoes
+  
+  [AÇÃO SEMÂNTICA COMPLEXA]
+  ├─ Validação: Verifica se Heroi e Goblin existem ✓
+  ├─ Busca: atacante = tabela_simbolos["Heroi"]
+  ├─ Busca: alvo = tabela_simbolos["Goblin"]
+  ├─ Cálculo: dano = 20 (ataque do Heroi)
+  ├─ Cálculo: defesa = 2 (defesa do Goblin)
+  ├─ Cálculo: dano_real = max(0, 20 - 2) = 18
+  ├─ Modificação: alvo['vida'] = 50 - 18 = 32
+  └─ Output: "[AÇÃO] Heroi atacou Goblin! Dano: 18"
+```
+
+**Passo 4: Derivação da ação de impressão**
+
+```
+instrucoes
+  ⇒ instrucao
+  ⇒ acao_imprimir
+  ⇒ IMPRIMIR LPAREN IDENT RPAREN
+  ⇒ imprimir ( Goblin )
+  
+  [AÇÃO SEMÂNTICA]
+  ├─ Busca: tabela_simbolos["Goblin"]
+  └─ Output: "STATUS Goblin: {'vida': 32, 'ataque': 15, 'defesa': 2}"
+```
+
+### Estado Final da Tabela de Símbolos:
+```python
+{
+    "Heroi": {"vida": 100, "ataque": 20, "defesa": 5},
+    "Goblin": {"vida": 32, "ataque": 15, "defesa": 2}  # Vida reduzida!
+}
+```
+
+---
+
+## 📌 SLIDE 4: Análise Semântica Formal (2 min)
+
+### Tabela Semântica Completa
+
+| Produção | Domínio | Predicados (Condições) | Ações Semânticas | Efeitos |
+|----------|---------|----------------------|-------------------|---------|
+| `definicao_npc → NPC IDENT { lista_atributos }` | `IDENT: string`, `atributos: dict` | ¬∃(nome ∈ TS) | `TS[nome] ← atributos`; `tipos[nome] ← "NPC"` | Inserção em TS; Verificação de redeclaração |
+| `atributo → IDENT = valor` | `IDENT: string`, `NUMBER: int`, `STRING: string` | `valor ∈ {int, string}` | `tipo[IDENT] ← typeof(valor)` | Atribuição de tipo a propriedade |
+| `acao_atacar → ATACAR(IDENT₁, IDENT₂)` | `IDENT₁, IDENT₂: string` | `∃IDENT₁ ∈ TS ∧ ∃IDENT₂ ∈ TS ∧ vida > 0 ∧ ataque ∈ Z⁺ ∧ defesa ∈ Z⁺` | `dano ← ataque₁ - defesa₂`; `vida₂ ← vida₂ - max(0, dano)`; `emit("[AÇÃO]...")` | Modificação de estado em TS; Validação de tipo |
+| `acao_imprimir → IMPRIMIR(IDENT)` | `IDENT: string` | `∃IDENT ∈ TS ∧ tipo[IDENT] = "NPC"` | `emit(TS[IDENT])` | Sem efeito colateral em TS |
+
+### Domínios e Tipos:
+
+```
+Domínio de Valores:
+  V = Int ∪ String
+  
+Domínio de Identificadores:
+  ID = {strings: [a-zA-Z_][a-zA-Z0-9_]*}
+  
+Domínio de NPCs:
+  NPC = {
+    nome: ID,
+    vida: Int (vida > 0),
+    ataque: Int (ataque ≥ 0),
+    defesa: Int (defesa ≥ 0)
+  }
+
+Tabela de Símbolos (TS):
+  TS: ID → NPC
+  Invariante: chaves únicas, sem redeclaração
+```
+
+### Verificação de Tipos:
+
+```
+typeof(X):
+  if X ∈ Int then typeof(X) = integer
+  if X ∈ String then typeof(X) = string
+  if X ∈ TS then typeof(X) = npc
+
+Regras de Tipagem:
+  [IDENT = NUMBER]  ⇒ tipo(IDENT) = integer
+  [IDENT = STRING]  ⇒ tipo(IDENT) = string
+  [ATACAR(I₁, I₂)]  ⇒ tipo(I₁) = npc ∧ tipo(I₂) = npc
+  [IMPRIMIR(I)]     ⇒ tipo(I) = npc
+```
+
+### Tabela de Atributos (com propagação):
+
+```
+Atributo      | Tipo    | Domínio      | Requerido | Padrão
+--------------|---------|--------------|-----------|--------
+nome          | string  | ID           | Sim       | —
+vida          | integer | Z⁺ ∪ {0}    | Sim       | —
+ataque        | integer | Z⁺ ∪ {0}    | Não       | 0
+defesa        | integer | Z⁺ ∪ {0}    | Não       | 0
+classe        | string  | {Herói, Monstro, Boss} | Não | "Monstro"
+```
+
+### Exemplo de Análise Semântica Detalhada - Ação ATACAR:
+
+**Entrada:** `atacar(Heroi, Goblin)`
+
+**Processamento Semântico:**
+
+```
+Fase 1: VERIFICAÇÃO DE TIPOS
+────────────────────────────
+  1. Verificar: tipo(Heroi) = npc ✓  [Heroi ∈ TS]
+  2. Verificar: tipo(Goblin) = npc ✓ [Goblin ∈ TS]
+  3. Predicado: ∃Heroi ∈ TS ∧ ∃Goblin ∈ TS  [VÁLIDO]
+
+Fase 2: VALIDAÇÃO SEMÂNTICA
+────────────────────────────
+  4. Validar: TS["Heroi"]["ataque"] ∈ Z⁺ = 20  [VÁLIDO]
+  5. Validar: TS["Goblin"]["defesa"] ∈ Z⁺ = 2  [VÁLIDO]
+  6. Validar: TS["Goblin"]["vida"] > 0 = 50    [VÁLIDO]
+
+Fase 3: CÁLCULO SEMÂNTICO
+──────────────────────────
+  7. atacante = TS["Heroi"]
+  8. alvo = TS["Goblin"]
+  9. dano = atacante.ataque = 20
+  10. defesa = alvo.defesa = 2
+  11. dano_real = max(0, 20 - 2) = 18
+
+Fase 4: MODIFICAÇÃO DE ESTADO (Side Effect)
+────────────────────────────────────────────
+  12. TS["Goblin"]["vida"] := 50 - 18 = 32
+  13. Verificar: vida > 0 ? 32 > 0 [SIM]
+
+Fase 5: EMISSÃO DE CÓDIGO (Output)
+──────────────────────────────────
+  14. emit: "[AÇÃO] Heroi atacou Goblin! Dano: 18"
+```
+
+**Código da Implementação:**
 
 ```python
 def p_acao_atacar(p):
@@ -130,26 +299,46 @@ def p_acao_atacar(p):
     nome_atacante = p[3]
     nome_alvo = p[5]
     
-    # VALIDAÇÃO SEMÂNTICA
+    # ====== FASE 1: VERIFICAÇÃO DE TIPOS ======
     if nome_atacante not in tabela_simbolos:
-        print(f"ERRO: Atacante '{nome_atacante}' não existe!")
+        print(f"[ERRO SEMÂNTICO] Tipo indefinido: {nome_atacante}")
+        return
+    if nome_alvo not in tabela_simbolos:
+        print(f"[ERRO SEMÂNTICO] Tipo indefinido: {nome_alvo}")
         return
     
-    # BUSCA NA TABELA DE SÍMBOLOS
+    # ====== FASE 2: VALIDAÇÃO SEMÂNTICA ======
     atacante = tabela_simbolos[nome_atacante]
     alvo = tabela_simbolos[nome_alvo]
     
-    # CÁLCULO
+    # Verificar atributos obrigatórios
+    if 'ataque' not in atacante:
+        print(f"[ERRO SEMÂNTICO] Atributo 'ataque' não definido em {nome_atacante}")
+        return
+    if 'defesa' not in alvo:
+        print(f"[ERRO SEMÂNTICO] Atributo 'defesa' não definido em {nome_alvo}")
+        return
+    
+    # Verificar predicados
+    if alvo['vida'] <= 0:
+        print(f"[ERRO SEMÂNTICO] {nome_alvo} já está derrotado (vida ≤ 0)")
+        return
+    
+    # ====== FASE 3: CÁLCULO SEMÂNTICO ======
     dano = atacante.get('ataque', 0)
     defesa = alvo.get('defesa', 0)
     dano_real = max(0, dano - defesa)
     
-    # MODIFICAÇÃO DE ESTADO
+    # ====== FASE 4: MODIFICAÇÃO DE ESTADO ======
     alvo['vida'] -= dano_real
     
-    # VERIFICAÇÃO DE DERROTA
+    # ====== FASE 5: EMISSÃO ======
+    print(f"[AÇÃO] {nome_atacante} atacou {nome_alvo}!")
+    print(f"       Dano calculado: {dano} - {defesa} = {dano_real}")
+    print(f"       Vida de {nome_alvo}: {alvo['vida'] + dano_real} → {alvo['vida']}")
+    
     if alvo['vida'] <= 0:
-        print(f"☠️ {nome_alvo} foi DERROTADO!")
+        print(f"       ☠️ {nome_alvo} foi DERROTADO!")
 ```
 
 **Estrutura de Dados:**
